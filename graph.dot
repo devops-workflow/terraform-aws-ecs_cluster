@@ -1,0 +1,98 @@
+digraph {
+	compound = "true"
+	newrank = "true"
+	subgraph "root" {
+		"[root] aws_autoscaling_group.main" [label = "aws_autoscaling_group.main", shape = "box"]
+		"[root] aws_autoscaling_policy.scale_down" [label = "aws_autoscaling_policy.scale_down", shape = "box"]
+		"[root] aws_autoscaling_policy.scale_up" [label = "aws_autoscaling_policy.scale_up", shape = "box"]
+		"[root] aws_cloudwatch_metric_alarm.cpu_high" [label = "aws_cloudwatch_metric_alarm.cpu_high", shape = "box"]
+		"[root] aws_cloudwatch_metric_alarm.cpu_low" [label = "aws_cloudwatch_metric_alarm.cpu_low", shape = "box"]
+		"[root] aws_cloudwatch_metric_alarm.memory_high" [label = "aws_cloudwatch_metric_alarm.memory_high", shape = "box"]
+		"[root] aws_cloudwatch_metric_alarm.memory_low" [label = "aws_cloudwatch_metric_alarm.memory_low", shape = "box"]
+		"[root] aws_ecs_cluster.main" [label = "aws_ecs_cluster.main", shape = "box"]
+		"[root] aws_launch_configuration.main" [label = "aws_launch_configuration.main", shape = "box"]
+		"[root] aws_security_group.cluster" [label = "aws_security_group.cluster", shape = "box"]
+		"[root] aws_security_group.external_elb" [label = "aws_security_group.external_elb", shape = "box"]
+		"[root] aws_security_group.internal_elb" [label = "aws_security_group.internal_elb", shape = "box"]
+		"[root] aws_security_group.mssql" [label = "aws_security_group.mssql", shape = "box"]
+		"[root] aws_security_group.mysql" [label = "aws_security_group.mysql", shape = "box"]
+		"[root] data.template_cloudinit_config.cloud_config" [label = "data.template_cloudinit_config.cloud_config", shape = "box"]
+		"[root] data.template_file.ecs_cloud_config" [label = "data.template_file.ecs_cloud_config", shape = "box"]
+		"[root] data.template_file.quay_auth" [label = "data.template_file.quay_auth", shape = "box"]
+		"[root] provider.aws" [label = "provider.aws", shape = "diamond"]
+		"[root] provider.template" [label = "provider.template", shape = "diamond"]
+		"[root] aws_autoscaling_group.main" -> "[root] aws_launch_configuration.main"
+		"[root] aws_autoscaling_group.main" -> "[root] var.availability_zones"
+		"[root] aws_autoscaling_group.main" -> "[root] var.desired_capacity"
+		"[root] aws_autoscaling_group.main" -> "[root] var.max_size"
+		"[root] aws_autoscaling_group.main" -> "[root] var.min_size"
+		"[root] aws_autoscaling_group.main" -> "[root] var.subnet_ids"
+		"[root] aws_autoscaling_policy.scale_down" -> "[root] aws_autoscaling_group.main"
+		"[root] aws_autoscaling_policy.scale_up" -> "[root] aws_autoscaling_group.main"
+		"[root] aws_cloudwatch_metric_alarm.cpu_high" -> "[root] aws_autoscaling_policy.scale_up"
+		"[root] aws_cloudwatch_metric_alarm.cpu_low" -> "[root] aws_autoscaling_policy.scale_down"
+		"[root] aws_cloudwatch_metric_alarm.cpu_low" -> "[root] aws_cloudwatch_metric_alarm.memory_high"
+		"[root] aws_cloudwatch_metric_alarm.memory_high" -> "[root] aws_cloudwatch_metric_alarm.cpu_high"
+		"[root] aws_cloudwatch_metric_alarm.memory_low" -> "[root] aws_cloudwatch_metric_alarm.cpu_low"
+		"[root] aws_ecs_cluster.main" -> "[root] provider.aws"
+		"[root] aws_ecs_cluster.main" -> "[root] var.environment"
+		"[root] aws_ecs_cluster.main" -> "[root] var.name"
+		"[root] aws_ecs_cluster.main" -> "[root] var.namespaced"
+		"[root] aws_launch_configuration.main" -> "[root] aws_security_group.cluster"
+		"[root] aws_launch_configuration.main" -> "[root] data.template_cloudinit_config.cloud_config"
+		"[root] aws_launch_configuration.main" -> "[root] var.associate_public_ip_address"
+		"[root] aws_launch_configuration.main" -> "[root] var.docker_volume_size"
+		"[root] aws_launch_configuration.main" -> "[root] var.iam_instance_profile"
+		"[root] aws_launch_configuration.main" -> "[root] var.instance_ebs_optimized"
+		"[root] aws_launch_configuration.main" -> "[root] var.key_name"
+		"[root] aws_launch_configuration.main" -> "[root] var.root_volume_size"
+		"[root] aws_security_group.cluster" -> "[root] aws_security_group.external_elb"
+		"[root] aws_security_group.cluster" -> "[root] aws_security_group.internal_elb"
+		"[root] aws_security_group.external_elb" -> "[root] aws_ecs_cluster.main"
+		"[root] aws_security_group.external_elb" -> "[root] var.tags"
+		"[root] aws_security_group.external_elb" -> "[root] var.vpc_id"
+		"[root] aws_security_group.internal_elb" -> "[root] aws_ecs_cluster.main"
+		"[root] aws_security_group.internal_elb" -> "[root] var.ingress_cidrs"
+		"[root] aws_security_group.internal_elb" -> "[root] var.security_groups"
+		"[root] aws_security_group.internal_elb" -> "[root] var.tags"
+		"[root] aws_security_group.internal_elb" -> "[root] var.vpc_id"
+		"[root] aws_security_group.mssql" -> "[root] aws_security_group.cluster"
+		"[root] aws_security_group.mysql" -> "[root] aws_security_group.cluster"
+		"[root] data.template_cloudinit_config.cloud_config" -> "[root] data.template_file.ecs_cloud_config"
+		"[root] data.template_cloudinit_config.cloud_config" -> "[root] data.template_file.quay_auth"
+		"[root] data.template_file.ecs_cloud_config" -> "[root] aws_ecs_cluster.main"
+		"[root] data.template_file.ecs_cloud_config" -> "[root] provider.template"
+		"[root] data.template_file.ecs_cloud_config" -> "[root] var.docker_auth_data"
+		"[root] data.template_file.ecs_cloud_config" -> "[root] var.docker_auth_type"
+		"[root] data.template_file.ecs_cloud_config" -> "[root] var.image_id"
+		"[root] data.template_file.ecs_cloud_config" -> "[root] var.instance_type"
+		"[root] data.template_file.ecs_cloud_config" -> "[root] var.quay_auth"
+		"[root] data.template_file.ecs_cloud_config" -> "[root] var.quay_user"
+		"[root] data.template_file.ecs_cloud_config" -> "[root] var.region"
+		"[root] data.template_file.quay_auth" -> "[root] provider.template"
+		"[root] data.template_file.quay_auth" -> "[root] var.quay_auth"
+		"[root] data.template_file.quay_auth" -> "[root] var.quay_user"
+		"[root] output.cluster_id" -> "[root] aws_ecs_cluster.main"
+		"[root] output.cluster_name" -> "[root] aws_ecs_cluster.main"
+		"[root] output.cluster_sg_id" -> "[root] aws_security_group.cluster"
+		"[root] output.external_lb_sg_id" -> "[root] aws_security_group.external_elb"
+		"[root] output.internal_lb_sg_id" -> "[root] aws_security_group.internal_elb"
+		"[root] output.mssql_sg_id" -> "[root] aws_security_group.mssql"
+		"[root] output.mysql_sg_id" -> "[root] aws_security_group.mysql"
+		"[root] output.name" -> "[root] var.name"
+		"[root] output.security_group_ids" -> "[root] aws_security_group.cluster"
+		"[root] root" -> "[root] aws_cloudwatch_metric_alarm.memory_low"
+		"[root] root" -> "[root] output.cluster_id"
+		"[root] root" -> "[root] output.cluster_name"
+		"[root] root" -> "[root] output.cluster_sg_id"
+		"[root] root" -> "[root] output.external_lb_sg_id"
+		"[root] root" -> "[root] output.internal_lb_sg_id"
+		"[root] root" -> "[root] output.mssql_sg_id"
+		"[root] root" -> "[root] output.mysql_sg_id"
+		"[root] root" -> "[root] output.name"
+		"[root] root" -> "[root] output.security_group_ids"
+		"[root] root" -> "[root] var.extra_cloud_config_content"
+		"[root] root" -> "[root] var.extra_cloud_config_type"
+	}
+}
+
